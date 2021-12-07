@@ -204,11 +204,6 @@
   font-size: 1.2rem;
   line-height: 1.5;
 }
-.border-card {
-  border-style: solid;
-  border-radius: 10px;
-  justify-content: space-between;
-}
 .border-circle {
   border-radius: 9999px;
 }

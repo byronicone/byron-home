@@ -2,7 +2,7 @@ import React from "react";
 
 const QuoteCard = ({ id, text, author }) => {
   return (
-    <div key={id} className="border-card width-350 mt-2 ml-2 padded">
+    <div key={id} className="quote-card">
       <h5>{text}</h5>-{author}
     </div>
   );
