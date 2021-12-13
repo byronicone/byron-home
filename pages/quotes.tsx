@@ -1,18 +1,10 @@
-import React, { useState } from "react";
+import React, { DOMElement, useState } from "react";
 import Layout from "../components/layout";
 import Head from "next/head";
 import QuoteCard from "../components/QuoteCard";
 import sampleQuotes from "../data/sample-quotes.json";
-
-const renderQuotes = (quotes) => {
-  return (
-    <section className="d-flex flex-wrap justify-content-center">
-      {quotes.map(({ id, text, author }) => (
-        <QuoteCard id={id} text={text} author={author} />
-      ))}
-    </section>
-  );
-};
+import { getDatabase, ref, push, set } from "firebase/database";
+import type { QuoteType } from "../types/types";
 
 const defaultQuoteInputData = {
   quoteText: "",
@@ -25,11 +17,13 @@ const Quotes = () => {
 
   //TODO use onEffect to get initial quotes from the database
 
-  const handleFormChange = ({ target }) => {
-    setQuoteInputData({ ...quoteInputData, [target.name]: target.value });
+  const handleFormChange = (
+    e: React.ChangeEvent<HTMLTextAreaElement | HTMLInputElement>
+  ) => {
+    setQuoteInputData({ ...quoteInputData, [e.target.name]: e.target.value });
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e: React.SyntheticEvent) => {
     e.preventDefault();
 
     const failedValidations = Object.values(quoteInputData).filter(
@@ -38,15 +32,36 @@ const Quotes = () => {
     if (failedValidations.length > 0) return;
 
     const newQuote = {
-      id: Date.now().toLocaleString(),
+      id: "",
       text: quoteInputData.quoteText,
       author: quoteInputData.quoteAuthor,
     };
 
     //TODO store the quotes in the DB
-    setQuotes([...quotes, newQuote]);
+    try {
+      const db = getDatabase();
+      const quoteListRef = ref(db, "quotes");
+      const newQuoteRef = push(quoteListRef);
+      await set(newQuoteRef, {
+        ...newQuote,
+      });
+      setQuotes([...quotes, newQuote]);
+      setQuoteInputData(defaultQuoteInputData);
+    } catch (e) {
+      if (e instanceof Error) {
+        alert(e.message);
+      }
+    }
+  };
 
-    setQuoteInputData(defaultQuoteInputData);
+  const renderQuotes = (quotes: QuoteType[]) => {
+    return (
+      <section className="d-flex flex-wrap justify-content-center">
+        {quotes.map(({ id, text, author }: QuoteType) => (
+          <QuoteCard id={id} text={text} author={author} />
+        ))}
+      </section>
+    );
   };
 
   return (
