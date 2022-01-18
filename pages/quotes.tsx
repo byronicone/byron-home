@@ -1,10 +1,10 @@
-import React, { DOMElement, useState } from "react";
+import React, { DOMElement, useEffect, useState } from "react";
 import Layout from "../components/layout";
 import Head from "next/head";
 import QuoteCard from "../components/QuoteCard";
-import sampleQuotes from "../data/sample-quotes.json";
-import { getDatabase, ref, push, set } from "firebase/database";
+import { ref, push, onValue, off, DataSnapshot } from "firebase/database";
 import type { QuoteType } from "../types/types";
+import { db } from "../data/firebase";
 
 const defaultQuoteInputData = {
   quoteText: "",
@@ -13,9 +13,25 @@ const defaultQuoteInputData = {
 
 const Quotes = () => {
   const [quoteInputData, setQuoteInputData] = useState(defaultQuoteInputData);
-  const [quotes, setQuotes] = useState(sampleQuotes.data);
+  const [quotes, setQuotes] = useState<any[]>([]);
 
   //TODO use onEffect to get initial quotes from the database
+  useEffect(() => {
+    const quotesRef = ref(db, "quotes");
+    onValue(quotesRef, (snapshot) => {
+      const quoteArr = getQuotesFromQuery(snapshot.val());
+      setQuotes(quoteArr);
+    });
+    return () => {
+      off(quotesRef);
+    };
+  }, []);
+
+  const getQuotesFromQuery = (quoteList: any) => {
+    return Object.keys(quoteList).map((key) => {
+      return { id: key, ...quoteList[key] };
+    });
+  };
 
   const handleFormChange = (
     e: React.ChangeEvent<HTMLTextAreaElement | HTMLInputElement>
@@ -29,22 +45,20 @@ const Quotes = () => {
     const failedValidations = Object.values(quoteInputData).filter(
       (v) => !v || v.length === 0
     );
+
+    //TODO return validation error to the UI
     if (failedValidations.length > 0) return;
 
     const newQuote = {
-      id: "",
       text: quoteInputData.quoteText,
       author: quoteInputData.quoteAuthor,
     };
 
     //TODO store the quotes in the DB
     try {
-      const db = getDatabase();
       const quoteListRef = ref(db, "quotes");
-      const newQuoteRef = push(quoteListRef);
-      await set(newQuoteRef, {
-        ...newQuote,
-      });
+
+      let quoteId = await push(quoteListRef, newQuote);
       setQuotes([...quotes, newQuote]);
       setQuoteInputData(defaultQuoteInputData);
     } catch (e) {
@@ -58,7 +72,7 @@ const Quotes = () => {
     return (
       <section className="d-flex flex-wrap justify-content-center">
         {quotes.map(({ id, text, author }: QuoteType) => (
-          <QuoteCard id={id} text={text} author={author} />
+          <QuoteCard key={id} id={id} text={text} author={author} />
         ))}
       </section>
     );
