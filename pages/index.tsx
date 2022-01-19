@@ -3,6 +3,7 @@ import Link from "next/link";
 import Date from "../components/date";
 import Layout, { siteTitle } from "../components/layout";
 import { getSortedPostsData } from "../lib/posts";
+import { PostData } from "../types/types";
 
 export async function getStaticProps() {
   const allPostsData = getSortedPostsData();
@@ -13,7 +14,11 @@ export async function getStaticProps() {
   };
 }
 
-function renderPosts(posts) {
+type Props = {
+  allPostsData: PostData[];
+};
+
+function renderPosts(posts: PostData[]) {
   return (
     <ul className="list">
       {posts &&
@@ -34,7 +39,7 @@ function renderPosts(posts) {
   );
 }
 
-export default function Home({ allPostsData }) {
+export default function Home({ allPostsData }: Props) {
   return (
     <Layout home>
       <Head>

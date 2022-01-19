@@ -8,7 +8,7 @@ const name = "Byron Barnes";
 export const siteTitle = "Next.js Sample Website";
 
 type LayoutProps = {
-  home?: string;
+  home?: boolean;
 };
 
 export default function Layout(props: React.PropsWithChildren<LayoutProps>) {
