@@ -78,12 +78,12 @@ input {
 .quote-card {
   border-style: solid;
   border-radius: 10px;
-  width: 40%;
+  width: 30%;
   margin: 1vw;
   padding: 2vw;
 }
 
-@media screen and (max-width: 600px) {
+@media screen and (max-width: 800px) {
   .quote-card {
     width: 100%;
   }
