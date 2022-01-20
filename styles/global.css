@@ -86,9 +86,11 @@ input {
   justify-content: center;
 }
 
-.photo-tile {
-  width: 250px;
-  height: 250px;
+.photo-frame {
+  position: relative;
+  width: 200px;
+  height: 200px;
+  border: 1px solid black;
 }
 
 .quote-card {

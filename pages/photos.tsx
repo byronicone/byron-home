@@ -67,7 +67,14 @@ const Photos = () => {
 
   const renderPhotos = (photoUrls: string[]) => {
     return photoUrls.map((url) => (
-      <Image className="photo-tile" height="250px" width="250px" src={url} />
+      <div className="photo-frame">
+        <Image
+          layout="fill"
+          objectFit="cover"
+          objectPosition="left top"
+          src={url}
+        />
+      </div>
     ));
   };
 
