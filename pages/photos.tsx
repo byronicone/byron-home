@@ -59,9 +59,9 @@ const Photos = () => {
   const uploadPhoto = (file: File) => {
     const storageRef = ref(storage, `photos/${file.name}`);
     uploadBytes(storageRef, file).then((snapshot) => {
-      console.log("Uploaded a blob or file!");
       setImagesToUpload([]);
       setPreviewUrls([]);
+      fetchDownloadUrls();
     });
   };
 
