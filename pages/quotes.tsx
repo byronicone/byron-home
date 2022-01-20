@@ -70,7 +70,7 @@ const Quotes = () => {
 
   const renderQuotes = (quotes: QuoteType[]) => {
     return (
-      <section className="d-flex flex-wrap justify-content-center">
+      <section className="grid">
         {quotes.map(({ id, text, author }: QuoteType) => (
           <QuoteCard key={id} id={id} text={text} author={author} />
         ))}

@@ -80,6 +80,17 @@ input {
   flex-direction: column;
 }
 
+.grid {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+}
+
+.photo-tile {
+  width: 250px;
+  height: 250px;
+}
+
 .quote-card {
   border-style: solid;
   border-radius: 10px;

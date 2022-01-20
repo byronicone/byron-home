@@ -11,4 +11,7 @@ module.exports = {
     FIREBASE_MSG_SENDER_ID: process.env.FIREBASE_MSG_SENDER_ID,
     FIREBASE_APP_ID: process.env.FIREBASE_APP_ID,
   },
+  images: {
+    domains: ["firebasestorage.googleapis.com"],
+  },
 };

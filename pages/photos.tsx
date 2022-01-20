@@ -1,19 +1,24 @@
-import { listAll, ref, uploadBytes } from "firebase/storage";
+import {
+  getDownloadURL,
+  listAll,
+  ref,
+  StorageReference,
+  uploadBytes,
+} from "firebase/storage";
 import Head from "next/head";
+import Image from "next/image";
 import React, { useEffect, useState } from "react";
 import Layout from "../components/layout";
 import { storage } from "../data/firebase";
 
 const Photos = () => {
-  const [imagesDownloaded, setImagesDownloaded] = useState<FileList | []>([]);
+  const [downloadUrls, setDownloadUrls] = useState<string[]>([]);
+
   const [imagesToUpload, setImagesToUpload] = useState<FileList | []>([]);
-  const [imageUrls, setImageUrls] = useState<string[]>([]);
+  const [previewUrls, setPreviewUrls] = useState<string[]>([]);
 
   useEffect(() => {
-    const storageRef = ref(storage, `photos`);
-    listAll(storageRef).then((res) => {
-      console.log(res.items);
-    });
+    fetchDownloadUrls();
   }, []);
 
   useEffect(() => {
@@ -22,7 +27,7 @@ const Photos = () => {
     for (let i = 0; i < imagesToUpload.length; i++) {
       newImageUrls.push(URL.createObjectURL(imagesToUpload[i]));
     }
-    setImageUrls(newImageUrls);
+    setPreviewUrls(newImageUrls);
   }, [imagesToUpload]);
 
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -31,9 +36,20 @@ const Photos = () => {
     }
   };
 
+  const fetchDownloadUrls = async () => {
+    const storageRef = ref(storage, `photos`);
+    const { items }: { items: StorageReference[] } = await listAll(storageRef);
+    setDownloadUrls(
+      await Promise.all(
+        items.map((r) => {
+          return getDownloadURL(r);
+        })
+      )
+    );
+  };
+
   const handleClick = (e: React.SyntheticEvent) => {
     e.preventDefault();
-    //get the blob from fs component
     if (imagesToUpload.length < 1) return;
     for (let i = 0; i < imagesToUpload.length; i++) {
       uploadPhoto(imagesToUpload[i]);
@@ -45,12 +61,14 @@ const Photos = () => {
     uploadBytes(storageRef, file).then((snapshot) => {
       console.log("Uploaded a blob or file!");
       setImagesToUpload([]);
-      setImageUrls([]);
+      setPreviewUrls([]);
     });
   };
 
-  const renderPhotoPreviews = () => {
-    return imageUrls.map((url) => <img key={url} src={url} />);
+  const renderPhotos = (photoUrls: string[]) => {
+    return photoUrls.map((url) => (
+      <Image className="photo-tile" height="250px" width="250px" src={url} />
+    ));
   };
 
   return (
@@ -58,7 +76,9 @@ const Photos = () => {
       <Head>
         <title>{"Byron's Photos"}</title>
       </Head>
-      <div>{"I'm gonna upload some photos here later"}.</div>
+      <div className="grid">
+        {downloadUrls.length > 0 ? renderPhotos(downloadUrls) : "No photos"}
+      </div>
       <div>
         <input
           type="file"
@@ -66,7 +86,10 @@ const Photos = () => {
           accept="image/*"
           onChange={handleFileChange}
         />
-        {renderPhotoPreviews()}
+        <div>
+          Photo Previews
+          {renderPhotos(previewUrls)}
+        </div>
         <button onClick={handleClick}>Upload Photos</button>
       </div>
     </Layout>
