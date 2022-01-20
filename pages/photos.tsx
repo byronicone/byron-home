@@ -70,6 +70,8 @@ const Photos = () => {
       <div className="photo-frame">
         <Image
           layout="fill"
+          quality="50"
+          sizes="20rem"
           objectFit="cover"
           objectPosition="left top"
           src={url}
