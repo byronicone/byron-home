@@ -75,6 +75,11 @@ input {
   transition: 1s background ease;
 }
 
+.nav {
+  border: 3px solid red;
+  flex-direction: column;
+}
+
 .quote-card {
   border-style: solid;
   border-radius: 10px;

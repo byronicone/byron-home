@@ -52,11 +52,18 @@ export default function Home({ allPostsData }: Props) {
         </p>
       </section>
       <section className="heading-md">
-        <p>
-          <Link href="/quotes">
-            <a>Check out some of my favorite quotes</a>
-          </Link>
-        </p>
+        <ul className="list">
+          <li className="listItem" key="quotes">
+            <Link href="/quotes">
+              <a>Check out some of my favorite quotes</a>
+            </Link>
+          </li>
+          <li className="listItem" key="photos">
+            <Link href="/photos">
+              <a>Photos I've taken or been awkwardly in</a>
+            </Link>
+          </li>
+        </ul>
       </section>
       <section className="heading-md pt-1">
         <h2 className="heading-lg">Blog</h2>

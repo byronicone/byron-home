@@ -5,7 +5,7 @@ import Link from "next/link";
 import React from "react";
 
 const name = "Byron Barnes";
-export const siteTitle = "Next.js Sample Website";
+export const siteTitle = "Byron Barnes";
 
 type LayoutProps = {
   home?: boolean;
